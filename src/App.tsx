@@ -2,11 +2,57 @@ import { TradingViewText, Tile, Arrow } from "./components";
 import styles from "./App.module.css";
 import { useCarousel } from "./hooks";
 import { MOCK_API_RESPONSE } from "./MOCK_API_RESPONSE";
+import { generateRandomNumber } from "./util";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const { currentIndex, carouselIncrement, handleCarouselClick } = useCarousel(
     MOCK_API_RESPONSE.length
   );
+  const [subheadingValues, setSubheadingValues] = useState(
+    MOCK_API_RESPONSE.map(() => generateRandomNumber(0, 200))
+  );
+
+  const [changeValues, setChangeValues] = useState(
+    MOCK_API_RESPONSE.map(() => generateRandomNumber(10, 20))
+  );
+
+  // Could do this but it would mean re running the effect every few seconds which seems a bit wasteful
+  // so instead I went with an empty depedancy array that calls the updateValues function
+
+  // useEffect(() => {
+  //   const updateValues = () => {
+  //     setSubheadingValues(values =>
+  //       values.map(() => generateRandomNumber(0, 200))
+  //     );
+  //     setChangeValues(values =>
+  //       values.map(() => generateRandomNumber(10, 20))
+  //     );
+  //   };
+
+  //   const timerId = setTimeout(updateValues, generateRandomNumber(1000, 5000));
+
+  //   return () => clearTimeout(timerId);
+  // }, [subheadingValues, changeValues]);
+
+  useEffect(() => {
+    const updateValues = () => {
+      setSubheadingValues((values) =>
+        values.map(() => generateRandomNumber(0, 200))
+      );
+      setChangeValues((values) =>
+        values.map(() => generateRandomNumber(10, 20))
+      );
+
+      const timerId = setTimeout(
+        updateValues,
+        generateRandomNumber(1000, 5000)
+      );
+      return () => clearTimeout(timerId);
+    };
+
+    updateValues();
+  }, []);
 
   return (
     <main className={styles.wrapper}>
@@ -24,13 +70,13 @@ export default function App() {
         {MOCK_API_RESPONSE.slice(
           currentIndex,
           currentIndex + carouselIncrement
-        ).map(({ id, heading, change, subheading, icon }) => (
+        ).map(({ id, heading, icon }, index) => (
           <Tile
             key={id}
             iconPath={icon}
             heading={heading}
-            subheading={subheading}
-            change={change}
+            subheading={{ value: subheadingValues[index], currency: "USD" }}
+            change={changeValues[index]}
           />
         ))}
         <div className={styles.arrowContainer}>
