@@ -1,5 +1,16 @@
 # Trading View Take home task
 
+### Installation
+
+This project is using Vite for speed and simplicity
+
+```
+yarn install
+yarn dev
+```
+
+Should get you up and running
+
 ### A few notes for whomever reviews this:
 
 - I've used CSS modules and no particular naming convention so as to keep the task as simple as possible.
